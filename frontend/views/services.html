@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Service History | Smart Vehicle Maintenance Platform</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <div class="app-wrapper">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="appSidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <i class="bi bi-speedometer2"></i>
+        </div>
+        <div>
+          <span class="brand-text">Smart<span style="color:#60a5fa;">Vehicle</span></span>
+          <span class="brand-subtitle">Maintenance Platform</span>
+        </div>
+      </div>
+
+      <ul class="sidebar-nav">
+        <li class="sidebar-section-title">Core Management</li>
+        <li class="sidebar-item">
+          <a href="/dashboard.html" class="sidebar-link">
+            <i class="bi bi-grid-1x2-fill"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a href="/vehicles.html" class="sidebar-link">
+            <i class="bi bi-car-front-fill"></i>
+            <span>My Vehicles</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a href="/services.html" class="sidebar-link active">
+            <i class="bi bi-wrench-adjustable-circle-fill"></i>
+            <span>Service History</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a href="/reminders.html" class="sidebar-link">
+            <i class="bi bi-bell-fill"></i>
+            <span>Reminders</span>
+          </a>
+        </li>
+
+        <li class="sidebar-section-title">Tools & Insights</li>
+        <li class="sidebar-item">
+          <a href="/problems.html" class="sidebar-link">
+            <i class="bi bi-search"></i>
+            <span>Problem Search</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a href="/reports.html" class="sidebar-link">
+            <i class="bi bi-bar-chart-line-fill"></i>
+            <span>Reports & Analytics</span>
+          </a>
+        </li>
+
+        <li class="sidebar-section-title">Account</li>
+        <li class="sidebar-item">
+          <a href="/profile.html" class="sidebar-link">
+            <i class="bi bi-person-gear"></i>
+            <span>User Profile</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-user-avatar">U</div>
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-name">Vehicle Owner</div>
+            <div class="sidebar-user-role">Local User</div>
+          </div>
+          <button class="btn btn-sm text-light p-0 border-0" onclick="App.logout()" title="Sign Out">
+            <i class="bi bi-box-arrow-right fs-5"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+      <!-- Top Navbar -->
+      <header class="top-navbar">
+        <div class="d-flex align-items-center gap-3">
+          <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle Navigation">
+            <i class="bi bi-list fs-5"></i>
+          </button>
+          <div>
+            <h5 class="top-navbar-title mb-0">Service History</h5>
+            <small class="text-muted d-none d-sm-inline">Record, search, and manage repair logs & costs</small>
+          </div>
+        </div>
+
+        <div class="top-navbar-actions">
+          <button class="btn btn-sm btn-primary-dark d-flex align-items-center gap-1" onclick="prepareAddService()">
+            <i class="bi bi-plus-lg"></i> Record Service
+          </button>
+
+          <!-- Profile Dropdown -->
+          <div class="dropdown">
+            <button class="btn btn-light rounded-circle p-1 border d-flex align-items-center justify-content-center" style="width:38px;height:38px;" data-bs-toggle="dropdown">
+              <span class="topbar-user-avatar fw-bold text-primary">U</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+              <li><h6 class="dropdown-header topbar-user-name">Vehicle Owner</h6></li>
+              <li><a class="dropdown-item" href="/profile.html"><i class="bi bi-person-gear me-2"></i>My Profile</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" href="javascript:void(0)" onclick="App.logout()"><i class="bi bi-box-arrow-right me-2"></i>Sign Out</a></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+
+      <!-- Page Content -->
+      <main class="page-content">
+        <!-- Filter and Search Bar -->
+        <div class="card-custom mb-4 p-3">
+          <div class="row g-3 align-items-center">
+            <div class="col-lg-4 col-md-6">
+              <div class="search-input-group">
+                <i class="bi bi-search"></i>
+                <input type="text" id="serviceSearchInput" class="form-control" placeholder="Search service, garage, parts...">
+              </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+              <select id="vehicleFilterSelect" class="form-select">
+                <option value="">All Registered Vehicles</option>
+              </select>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+              <select id="sortSelect" class="form-select">
+                <option value="date_desc">Latest Service First</option>
+                <option value="date_asc">Oldest Service First</option>
+                <option value="cost_desc">Cost (High to Low)</option>
+                <option value="cost_asc">Cost (Low to High)</option>
+              </select>
+            </div>
+
+            <div class="col-lg-2 col-md-6 text-lg-end">
+              <button class="btn btn-outline-custom w-100" id="resetFiltersBtn">
+                <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Services Records Table -->
+        <div class="card-custom">
+          <div class="card-header-custom">
+            <div class="card-title-custom">
+              <i class="bi bi-tools text-primary"></i> Maintenance Records
+            </div>
+            <div class="small text-muted">
+              Total Records: <strong id="serviceCountDisplay">0</strong> &bull; Total Expense: <strong class="text-success" id="serviceTotalExpenseDisplay">$0.00</strong>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-custom align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Vehicle</th>
+                  <th>Service Type</th>
+                  <th>Odometer</th>
+                  <th>Work Description & Parts</th>
+                  <th>Service Centre</th>
+                  <th>Total Cost</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="servicesTableBody">
+                <tr>
+                  <td colspan="8" class="text-center py-5 text-muted">
+                    <div class="spinner-border spinner-border-sm text-primary mb-2"></div>
+                    <div>Loading service logs...</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Add / Edit Service Record Modal -->
+  <div class="modal fade" id="serviceModal" tabindex="-1" aria-labelledby="serviceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0 shadow-lg" style="border-radius: var(--radius-md);">
+        <div class="modal-header border-bottom">
+          <h5 class="modal-title fw-bold" id="serviceModalLabel">Record Service</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="serviceForm" novalidate>
+          <input type="hidden" id="serviceId" value="">
+          <div class="modal-body p-4">
+            <div id="serviceModalAlert" class="alert d-none" role="alert"></div>
+
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="formVehicleId" class="form-label">Select Vehicle *</label>
+                <select class="form-select" id="formVehicleId" required>
+                  <option value="">Choose vehicle...</option>
+                </select>
+                <div class="invalid-feedback">Please choose a vehicle.</div>
+              </div>
+
+              <div class="col-md-6">
+                <label for="formServiceType" class="form-label">Service Type *</label>
+                <select class="form-select" id="formServiceType" required>
+                  <option value="">Select or choose custom...</option>
+                  <option value="Engine Oil & Filter Change">Engine Oil & Filter Change</option>
+                  <option value="General Periodic Service">General Periodic Service</option>
+                  <option value="Brake Inspection & Pad Replacement">Brake Inspection & Pad Replacement</option>
+                  <option value="Tyre Rotation & Wheel Alignment">Tyre Rotation & Wheel Alignment</option>
+                  <option value="Battery Health Check / Replacement">Battery Health Check / Replacement</option>
+                  <option value="Transmission Fluid Flush">Transmission Fluid Flush</option>
+                  <option value="Air & Cabin Filter Replacement">Air & Cabin Filter Replacement</option>
+                  <option value="Coolant Flush & Thermostat">Coolant Flush & Thermostat</option>
+                  <option value="Spark Plugs Replacement">Spark Plugs Replacement</option>
+                  <option value="Suspension & Steering Repair">Suspension & Steering Repair</option>
+                  <option value="Other Maintenance">Other Maintenance</option>
+                </select>
+                <div class="invalid-feedback">Service type is required.</div>
+              </div>
+
+              <div class="col-md-6">
+                <label for="formServiceDate" class="form-label">Service Date *</label>
+                <input type="date" class="form-control" id="formServiceDate" required>
+                <div class="invalid-feedback">Service date is required.</div>
+              </div>
+
+              <div class="col-md-6">
+                <label for="formOdometer" class="form-label">Odometer Reading (km / miles) *</label>
+                <input type="number" class="form-control" id="formOdometer" min="0" placeholder="e.g. 42000" required>
+                <div class="invalid-feedback">Odometer reading must be 0 or greater.</div>
+              </div>
+
+              <div class="col-md-6">
+                <label for="formCost" class="form-label">Total Cost ($) *</label>
+                <input type="number" step="0.01" min="0" class="form-control" id="formCost" placeholder="0.00" required>
+                <div class="invalid-feedback">Total cost is required.</div>
+              </div>
+
+              <div class="col-md-6">
+                <label for="formServiceCenter" class="form-label">Service Centre / Garage Name</label>
+                <input type="text" class="form-control" id="formServiceCenter" placeholder="e.g. Apex Toyota Care, Quick Lube">
+              </div>
+
+              <div class="col-md-6">
+                <label for="formNextDate" class="form-label">Next Service Date (Recommended)</label>
+                <input type="date" class="form-control" id="formNextDate">
+                <div class="form-text small text-muted">Helps calculate health status & reminder schedule.</div>
+              </div>
+
+              <div class="col-md-6">
+                <label for="formParts" class="form-label">Parts Replaced</label>
+                <input type="text" class="form-control" id="formParts" placeholder="e.g. Oil filter, Front ceramic brake pads">
+              </div>
+
+              <div class="col-12">
+                <label for="formDescription" class="form-label">Description / Technician Notes</label>
+                <textarea class="form-control" id="formDescription" rows="2" placeholder="Summary of maintenance work, diagnosis, or recommendations..."></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer border-top bg-light">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary-dark px-4" id="saveServiceBtn">
+              <span class="spinner-border spinner-border-sm me-2 d-none" id="saveServiceSpinner"></span>
+              <span id="saveServiceBtnText">Save Service Record</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/app-utils.js"></script>
+  <script src="/js/services.js"></script>
+</body>
+</html>

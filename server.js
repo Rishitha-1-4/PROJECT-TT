@@ -3,6 +3,7 @@
  */
 
 require('dotenv').config();
+const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const session = require('express-session');
@@ -42,54 +43,62 @@ app.use(session({
   }
 }));
 
-// Serve static assets from public/ directory
-app.use(express.static(path.join(__dirname, 'public')));
+// Determine public static assets directory (supports both root and frontend/ folder)
+const publicDir = fs.existsSync(path.join(__dirname, 'frontend', 'public'))
+  ? path.join(__dirname, 'frontend', 'public')
+  : path.join(__dirname, 'public');
+app.use(express.static(publicDir));
+
+// Determine views directory (supports both root and frontend/ folder)
+const viewsDir = fs.existsSync(path.join(__dirname, 'frontend', 'views'))
+  ? path.join(__dirname, 'frontend', 'views')
+  : path.join(__dirname, 'views');
 
 // HTML Views Routing
 // Public Views
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'index.html'));
+  res.sendFile(path.join(viewsDir, 'index.html'));
 });
 
 app.get('/login.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'login.html'));
+  res.sendFile(path.join(viewsDir, 'login.html'));
 });
 
 app.get('/register.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'register.html'));
+  res.sendFile(path.join(viewsDir, 'register.html'));
 });
 
 // Protected Views (Require Authentication)
 app.get('/dashboard.html', requireAuth, (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'dashboard.html'));
+  res.sendFile(path.join(viewsDir, 'dashboard.html'));
 });
 
 app.get('/vehicles.html', requireAuth, (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'vehicles.html'));
+  res.sendFile(path.join(viewsDir, 'vehicles.html'));
 });
 
 app.get('/vehicle-details.html', requireAuth, (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'vehicle-details.html'));
+  res.sendFile(path.join(viewsDir, 'vehicle-details.html'));
 });
 
 app.get('/services.html', requireAuth, (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'services.html'));
+  res.sendFile(path.join(viewsDir, 'services.html'));
 });
 
 app.get('/reminders.html', requireAuth, (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'reminders.html'));
+  res.sendFile(path.join(viewsDir, 'reminders.html'));
 });
 
 app.get('/problems.html', requireAuth, (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'problems.html'));
+  res.sendFile(path.join(viewsDir, 'problems.html'));
 });
 
 app.get('/reports.html', requireAuth, (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'reports.html'));
+  res.sendFile(path.join(viewsDir, 'reports.html'));
 });
 
 app.get('/profile.html', requireAuth, (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'profile.html'));
+  res.sendFile(path.join(viewsDir, 'profile.html'));
 });
 
 // Mount REST API endpoints
