@@ -1,0 +1,31 @@
+{
+  "name": "smart-vehicle-maintenance",
+  "version": "1.0.0",
+  "description": "Smart Vehicle Maintenance Platform - Centralized platform to manage vehicles, service history, reminders, problems, and analytics.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node test/run-checks.js && node test/routes.test.js",
+    "db:init": "node database/init.js",
+    "db:seed": "node database/seed.js"
+  },
+  "keywords": [
+    "vehicle",
+    "maintenance",
+    "automotive",
+    "service-tracking",
+    "express",
+    "mysql"
+  ],
+  "author": "Smart Vehicle Maintenance Team",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^17.2.4",
+    "express": "^5.2.1",
+    "express-session": "^1.18.2",
+    "mysql2": "^3.16.2",
+    "nodemailer": "^7.0.13"
+  }
+}

@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vehicle Details & Health | Smart Vehicle Maintenance Platform</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <div class="app-wrapper">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="appSidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <i class="bi bi-speedometer2"></i>
+        </div>
+        <div>
+          <span class="brand-text">Smart<span style="color:#60a5fa;">Vehicle</span></span>
+          <span class="brand-subtitle">Maintenance Platform</span>
+        </div>
+      </div>
+
+      <ul class="sidebar-nav">
+        <li class="sidebar-section-title">Core Management</li>
+        <li class="sidebar-item">
+          <a href="/dashboard.html" class="sidebar-link">
+            <i class="bi bi-grid-1x2-fill"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a href="/vehicles.html" class="sidebar-link active">
+            <i class="bi bi-car-front-fill"></i>
+            <span>My Vehicles</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a href="/services.html" class="sidebar-link">
+            <i class="bi bi-wrench-adjustable-circle-fill"></i>
+            <span>Service History</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a href="/reminders.html" class="sidebar-link">
+            <i class="bi bi-bell-fill"></i>
+            <span>Reminders</span>
+          </a>
+        </li>
+
+        <li class="sidebar-section-title">Tools & Insights</li>
+        <li class="sidebar-item">
+          <a href="/problems.html" class="sidebar-link">
+            <i class="bi bi-search"></i>
+            <span>Problem Search</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a href="/reports.html" class="sidebar-link">
+            <i class="bi bi-bar-chart-line-fill"></i>
+            <span>Reports & Analytics</span>
+          </a>
+        </li>
+
+        <li class="sidebar-section-title">Account</li>
+        <li class="sidebar-item">
+          <a href="/profile.html" class="sidebar-link">
+            <i class="bi bi-person-gear"></i>
+            <span>User Profile</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-user-avatar">U</div>
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-name">Vehicle Owner</div>
+            <div class="sidebar-user-role">Local User</div>
+          </div>
+          <button class="btn btn-sm text-light p-0 border-0" onclick="App.logout()" title="Sign Out">
+            <i class="bi bi-box-arrow-right fs-5"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+      <!-- Top Navbar -->
+      <header class="top-navbar">
+        <div class="d-flex align-items-center gap-3">
+          <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle Navigation">
+            <i class="bi bi-list fs-5"></i>
+          </button>
+          <a href="/vehicles.html" class="btn btn-sm btn-outline-custom">
+            <i class="bi bi-arrow-left me-1"></i> Back to Vehicles
+          </a>
+        </div>
+
+        <div class="top-navbar-actions">
+          <button class="btn btn-sm btn-primary-dark d-flex align-items-center gap-1" id="logServiceBtn">
+            <i class="bi bi-plus-lg"></i> Record Service
+          </button>
+          <button class="btn btn-sm btn-outline-custom d-flex align-items-center gap-1" id="addReminderBtn">
+            <i class="bi bi-bell"></i> Set Reminder
+          </button>
+
+          <!-- Profile Dropdown -->
+          <div class="dropdown">
+            <button class="btn btn-light rounded-circle p-1 border d-flex align-items-center justify-content-center" style="width:38px;height:38px;" data-bs-toggle="dropdown">
+              <span class="topbar-user-avatar fw-bold text-primary">U</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+              <li><h6 class="dropdown-header topbar-user-name">Vehicle Owner</h6></li>
+              <li><a class="dropdown-item" href="/profile.html"><i class="bi bi-person-gear me-2"></i>My Profile</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" href="javascript:void(0)" onclick="App.logout()"><i class="bi bi-box-arrow-right me-2"></i>Sign Out</a></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+
+      <!-- Page Content -->
+      <main class="page-content">
+        <!-- Vehicle Hero Header Card -->
+        <div class="card-custom mb-4 p-4" style="background: linear-gradient(135deg, #0b132b, #1e293b); color: #ffffff;">
+          <div class="row align-items-center g-4">
+            <div class="col-md-7">
+              <div class="d-flex align-items-center gap-3 mb-2">
+                <span class="badge bg-primary px-3 py-1" id="vType">Sedan</span>
+                <span id="vStatusBadge"></span>
+              </div>
+              <h2 class="fw-bold mb-1 text-white" id="vName">Loading Vehicle...</h2>
+              <p class="text-light text-opacity-75 mb-3" id="vMakeModelYear">—</p>
+
+              <div class="d-flex flex-wrap gap-4 text-light small">
+                <div>
+                  <div class="text-secondary text-uppercase fw-semibold" style="font-size:0.75rem;">Plate Number</div>
+                  <div class="fw-bold font-monospace fs-6" id="vPlate">—</div>
+                </div>
+                <div>
+                  <div class="text-secondary text-uppercase fw-semibold" style="font-size:0.75rem;">Odometer</div>
+                  <div class="fw-bold fs-6" id="vOdometer">—</div>
+                </div>
+                <div>
+                  <div class="text-secondary text-uppercase fw-semibold" style="font-size:0.75rem;">Fuel Type</div>
+                  <div class="fw-bold fs-6" id="vFuel">—</div>
+                </div>
+                <div>
+                  <div class="text-secondary text-uppercase fw-semibold" style="font-size:0.75rem;">Purchase Date</div>
+                  <div class="fw-bold fs-6" id="vPurchaseDate">—</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-5">
+              <div class="p-3 rounded-3 bg-white bg-opacity-10 border border-white border-opacity-10">
+                <div class="small text-uppercase fw-bold text-info mb-1"><i class="bi bi-shield-check me-1"></i> Maintenance Status Assessment</div>
+                <div class="h5 fw-bold mb-1" id="vHealthHeadline">Evaluating...</div>
+                <p class="small text-light text-opacity-75 mb-0" id="vHealthDesc">Calculated from actual service schedules and task due dates.</p>
+                <div class="mt-2 text-secondary" style="font-size: 0.72rem;">
+                  * Note: Status reflects schedule compliance, not an electronic vehicle diagnostic scan.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 Key Metrics Cards for this Vehicle -->
+        <div class="row g-3 mb-4">
+          <div class="col-sm-6 col-xl-3">
+            <div class="stat-card">
+              <div>
+                <div class="stat-label">Total Expense</div>
+                <div class="stat-value text-success" id="kVExpense">$0.00</div>
+                <small class="text-muted">Recorded repairs & fluids</small>
+              </div>
+              <div class="stat-icon green">
+                <i class="bi bi-cash-stack"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-6 col-xl-3">
+            <div class="stat-card">
+              <div>
+                <div class="stat-label">Services Logged</div>
+                <div class="stat-value" id="kVServicesCount">0</div>
+                <small class="text-muted">Completed workshop visits</small>
+              </div>
+              <div class="stat-icon blue">
+                <i class="bi bi-wrench-adjustable-circle"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-6 col-xl-3">
+            <div class="stat-card">
+              <div>
+                <div class="stat-label">Upcoming Tasks</div>
+                <div class="stat-value text-primary" id="kVUpcomingCount">0</div>
+                <small class="text-muted">Due soon</small>
+              </div>
+              <div class="stat-icon amber">
+                <i class="bi bi-bell"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-6 col-xl-3">
+            <div class="stat-card">
+              <div>
+                <div class="stat-label">Overdue Tasks</div>
+                <div class="stat-value text-danger" id="kVOverdueCount">0</div>
+                <small class="text-muted">Past scheduled date</small>
+              </div>
+              <div class="stat-icon red">
+                <i class="bi bi-exclamation-triangle"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Service History & Reminders Sections -->
+        <div class="row g-4">
+          <!-- Service Records History -->
+          <div class="col-lg-7">
+            <div class="card-custom h-100">
+              <div class="card-header-custom">
+                <div class="card-title-custom">
+                  <i class="bi bi-journal-text text-primary"></i> Maintenance & Service History
+                </div>
+                <button class="btn btn-sm btn-primary-dark" onclick="openVehicleServiceModal()">
+                  <i class="bi bi-plus-lg me-1"></i> Log Service
+                </button>
+              </div>
+              <div class="table-responsive">
+                <table class="table table-custom align-middle mb-0">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Service Type</th>
+                      <th>Odometer</th>
+                      <th>Cost</th>
+                      <th>Centre</th>
+                    </tr>
+                  </thead>
+                  <tbody id="vehicleServicesTbody">
+                    <tr><td colspan="5" class="text-center py-4 text-muted">Loading services...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reminders for this vehicle -->
+          <div class="col-lg-5">
+            <div class="card-custom h-100">
+              <div class="card-header-custom">
+                <div class="card-title-custom">
+                  <i class="bi bi-bell-fill text-warning"></i> Maintenance Reminders
+                </div>
+                <button class="btn btn-sm btn-outline-custom" onclick="openVehicleReminderModal()">
+                  <i class="bi bi-plus-lg me-1"></i> Add
+                </button>
+              </div>
+              <div class="p-3">
+                <div id="vehicleRemindersList" class="d-flex flex-column gap-2">
+                  <div class="text-center py-4 text-muted">Loading reminders...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/app-utils.js"></script>
+  <script>
+    let currentVehicleId = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const user = await App.initAuthHeader();
+      if (!user) return;
+
+      const urlParams = new URLSearchParams(window.location.search);
+      currentVehicleId = urlParams.get('id');
+
+      if (!currentVehicleId) {
+        window.location.href = '/vehicles.html';
+        return;
+      }
+
+      document.getElementById('logServiceBtn').addEventListener('click', () => {
+        window.location.href = `/services.html?vehicle_id=${currentVehicleId}&action=new`;
+      });
+      document.getElementById('addReminderBtn').addEventListener('click', () => {
+        window.location.href = `/reminders.html?vehicle_id=${currentVehicleId}&action=new`;
+      });
+
+      await loadVehicleDetails();
+    });
+
+    async function loadVehicleDetails() {
+      try {
+        const res = await fetch(`/api/vehicles/${currentVehicleId}`);
+        if (!res.ok) {
+          if (res.status === 404 || res.status === 403) {
+            App.showToast('Vehicle not found or unauthorized access.', 'error');
+            setTimeout(() => window.location.href = '/vehicles.html', 1500);
+            return;
+          }
+          throw new Error('Could not load vehicle details');
+        }
+
+        const data = await res.json();
+        const v = data.vehicle;
+        const health = data.health;
+
+        // Header info
+        document.getElementById('vName').textContent = v.name;
+        document.getElementById('vMakeModelYear').textContent = `${v.make} ${v.model} &bull; Model Year ${v.year}`;
+        document.getElementById('vPlate').textContent = v.registration_number;
+        document.getElementById('vOdometer').textContent = `${App.formatNumber(v.current_odometer)} km`;
+        document.getElementById('vFuel').textContent = v.fuel_type;
+        document.getElementById('vType').textContent = v.vehicle_type;
+        document.getElementById('vPurchaseDate').textContent = App.formatDate(v.purchase_date);
+
+        // Status assessment
+        document.getElementById('vStatusBadge').innerHTML = App.renderStatusBadge(health.status);
+        document.getElementById('vHealthHeadline').textContent = health.status === 'Good' ? 'Healthy & Up to Date' : (health.status === 'Due Soon' ? 'Maintenance Due Soon' : 'Service Overdue');
+        document.getElementById('vHealthDesc').textContent = health.statusMessage;
+
+        // KPI
+        document.getElementById('kVExpense').textContent = App.formatCurrency(health.totalExpenses);
+        document.getElementById('kVServicesCount').textContent = health.serviceCount;
+        document.getElementById('kVUpcomingCount').textContent = health.upcomingTasksCount;
+        document.getElementById('kVOverdueCount').textContent = health.overdueTasksCount;
+
+        // Services table
+        renderServicesTable(data.services);
+
+        // Reminders list
+        renderRemindersList(data.reminders);
+      } catch (err) {
+        console.error(err);
+        App.showToast('Error loading vehicle details', 'error');
+      }
+    }
+
+    function renderServicesTable(services) {
+      const tbody = document.getElementById('vehicleServicesTbody');
+      if (!services || services.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="text-center py-4 text-muted">
+              No service logs recorded for this vehicle yet.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      let html = '';
+      services.forEach(s => {
+        html += `
+          <tr>
+            <td>${App.formatDate(s.service_date)}</td>
+            <td>
+              <div class="fw-semibold">${s.service_type}</div>
+              ${s.parts_replaced ? `<small class="text-muted d-block">Parts: ${s.parts_replaced}</small>` : ''}
+            </td>
+            <td>${App.formatNumber(s.odometer_reading)} km</td>
+            <td class="fw-bold text-success">${App.formatCurrency(s.total_cost)}</td>
+            <td>${s.service_center || '—'}</td>
+          </tr>
+        `;
+      });
+      tbody.innerHTML = html;
+    }
+
+    function renderRemindersList(reminders) {
+      const list = document.getElementById('vehicleRemindersList');
+      if (!reminders || reminders.length === 0) {
+        list.innerHTML = `
+          <div class="text-center py-4 text-muted">
+            <i class="bi bi-check-circle fs-3 text-secondary mb-2 d-block"></i>
+            No active reminders for this vehicle.
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      reminders.forEach(r => {
+        let statusBadge = App.renderStatusBadge(r.status);
+        html += `
+          <div class="p-3 rounded border d-flex justify-content-between align-items-center" style="background:#fafbfc;">
+            <div>
+              <div class="fw-semibold text-navy-main">${r.task_name}</div>
+              <small class="text-muted">Due: ${App.formatDate(r.due_date)} ${r.due_odometer ? `&bull; ${App.formatNumber(r.due_odometer)} km` : ''}</small>
+            </div>
+            <div>
+              ${statusBadge}
+            </div>
+          </div>
+        `;
+      });
+      list.innerHTML = html;
+    }
+
+    function openVehicleServiceModal() {
+      window.location.href = `/services.html?vehicle_id=${currentVehicleId}&action=new`;
+    }
+
+    function openVehicleReminderModal() {
+      window.location.href = `/reminders.html?vehicle_id=${currentVehicleId}&action=new`;
+    }
+  </script>
+</body>
+</html>
